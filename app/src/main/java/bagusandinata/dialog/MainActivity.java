@@ -1,17 +1,28 @@
 package bagusandinata.dialog;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
     AlertDialog alertDialog;
     AlertDialog.Builder builder;
+    ProgressDialog progressDialog;
     String[] items = {"Easy", "Medium", "Hard", "Very Hard"};
     String results = "";
+    Handler handler;
+    Runnable runnable;
+    Timer timer;
+    int i=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +33,10 @@ public class MainActivity extends AppCompatActivity {
 //        getAlertDialog();
 
         //confirmation dialog
-        getConfirmationDialog();
+//        getConfirmationDialog();
+
+        //progress dialog
+        getProgressDialog();
 
 
     }
@@ -96,6 +110,62 @@ public class MainActivity extends AppCompatActivity {
 
         //show dialog
         alertDialog.show();
+    }
+
+    private void getProgressDialog(){
+
+        progressDialog = new ProgressDialog(MainActivity.this);
+
+        //style horizontal progress dialog
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+
+        //set style dialog
+        progressDialog.setIndeterminate(false);
+
+        //set title progress dialog
+        progressDialog.setTitle("Progress Dialog");
+
+        //set message progress dialog
+        progressDialog.setMessage("Please wait...");
+
+        //progress dialog show
+        progressDialog.show();
+
+        //set progress
+        progressDialog.setProgress(0);
+
+        //set max progress
+        progressDialog.setMax(100);
+
+        //create handler
+        handler = new Handler();
+
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+
+                i = i+5;
+                if (i<=100){
+
+                    progressDialog.setProgress(i);
+
+                }else {
+
+                    timer.cancel();
+                    progressDialog.cancel();
+                    i=0;
+                }
+            }
+        };
+
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(runnable);
+            }
+        },3000, 100);
+
     }
 
 }
